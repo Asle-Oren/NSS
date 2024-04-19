@@ -1,0 +1,18 @@
+test2;bok;arbeidsutvalg;Levert;13.02.2024 20:17:24;457893457
+test2;bok;arbeidsutvalg;Utlånt;13.02.2024 20:17:27;457893457;uit123
+test2;bok;arbeidsutvalg;Levert;13.02.2024 20:17:32;457893457
+test2;bok;arbeidsutvalg;Levert;13.02.2024 20:18:58;457893417
+test2;bok;arbeidsutvalg;Utlånt;13.02.2024 20:19:08;457893417;uit123
+test2;bok;arbeidsutvalg;Levert;13.02.2024 20:19:12;457893417
+test2;bok;arbeidsutvalg;registrert;13.02.2024 20:19:42;45789117
+test2;bok;arbeidsutvalg;Utlånt;13.02.2024 20:19:45;45789117;uit123
+test2;bok;arbeidsutvalg;Levert;13.02.2024 20:19:48;45789117
+test navn;bok;algoritmi;registrert;13.02.2024 22:26:11;473829123
+test navn;bok;algoritmi;Utlånt;13.02.2024 22:26:16;473829123;uit123
+test navn;bok;algoritmi;Utlånt;13.02.2024 22:26:20;473829123;uit123
+test navn;bok;algoritmi;Utlånt;13.02.2024 22:26:26;473829123;uit123
+test navn;bok;algoritmi;Levert;13.02.2024 22:31:12;473829123
+test navn;bok;algoritmi;Utlånt;13.02.2024 22:31:15;473829123;uit123
+test navn;bok;algoritmi;Levert;13.02.2024 22:31:25;473829123
+test;bok;algoritmi;registrert;15.02.2024 23:59:02;1273823
+test;bok;algoritmi;Utlånt;15.02.2024 23:59:06;1273823;uit123
