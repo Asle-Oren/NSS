@@ -30,6 +30,9 @@ def lookup(object_list, barcode):
     except:
         print("An error occured")
 
+def register(scan):
+    pass
+
 def main():
     # check if csv files exist, if not create the files
 
@@ -93,6 +96,7 @@ def main():
                 scan = read(scan)
                 name, object_type, owner, barcode = scan[0], scan[1], scan[2], scan[3]
 
+                #rewrite lookup function to look for unique id instead
                 index = lookup(object_list, barcode)
                 if index != -1:  # if object is in the system
                     if object_list[index]["status"].capitalize() == "Utlånt":
@@ -126,6 +130,9 @@ def main():
                         print("Object has already been returned")
 
             elif mode == "register":  # code to add new entry to csv file
+
+                register(scan)
+
                 scan = read(scan)
                 name, object_type, owner, barcode = scan[0], scan[1], scan[2], scan[3]
 
