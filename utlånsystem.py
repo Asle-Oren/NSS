@@ -30,17 +30,17 @@ def lookup(object_list, barcode):
     print(f'{object_list=}')
     for i, obj in enumerate(object_list):
         print(f'{obj=}')
-        if barcode == obj.get("Barcode"):
+        if barcode == obj.get("NSS Barcode"):
             return i
     return -1
 
 
 def make_excel_files():
     if not os.path.isfile("loan_system_object_library.xlsx"):
-        df = pd.DataFrame(columns=["Name", "Type Object", "Belongs To", "Barcode", "State", "ISBN", "Registered Date", "Author", "Publisher", "Published"])
+        df = pd.DataFrame(columns=["Name", "Type Object", "Belongs To", "NSS Barcode", "State", "ISBN", "Registered Date", "Author", "Publisher", "Published"])
         df.to_excel("loan_system_object_library.xlsx", index=False)
     if not os.path.isfile("activity_history.xlsx"):
-        df = pd.DataFrame(columns=["Name", "Type Object", "Belongs To", "Action", "Timestamp", "Barcode", "Card"])
+        df = pd.DataFrame(columns=["Name", "Type Object", "Belongs To", "Action", "Timestamp", "NSS Barcode", "Card"])
         df.to_excel("activity_history.xlsx", index=False)
 
 
@@ -50,7 +50,7 @@ def read_library():
         return df.to_dict(orient='records'), df
     except Exception as e:
         print(f"Error reading library file: {e}")
-        return [], pd.DataFrame(columns=["Name", "Type Object", "Belongs To", "Barcode", "State", "ISBN", "Registered Date", "Author", "Publisher", "Published"])
+        return [], pd.DataFrame(columns=["Name", "Type Object", "Belongs To", "NSS Barcode", "State", "ISBN", "Registered Date", "Author", "Publisher", "Published"])
 
 
 def save_library(df):
@@ -61,7 +61,7 @@ def append_history(entry):
     try:
         df = pd.read_excel("activity_history.xlsx")
     except FileNotFoundError:
-        df = pd.DataFrame(columns=["Name", "Type Object", "Belongs To", "Action", "Timestamp", "Barcode", "Card"])
+        df = pd.DataFrame(columns=["Name", "Type Object", "Belongs To", "Action", "Timestamp", "NSS Barcode", "Card"])
     df = pd.concat([df, pd.DataFrame([entry])], ignore_index=True)
     df.to_excel("activity_history.xlsx", index=False)
 
@@ -84,9 +84,9 @@ def handle_return(object_list, df_library, scan, card_tracker):
             'Name': name,
             'Type Object': object_type,
             'Belongs To': owner,
-            'Action': 'handed in',
+            'Action': 'Handed In',
             'Timestamp': now,
-            'Barcode': barcode,
+            'NSS Barcode': barcode,
             'Card': card_tracker.card
         })
         print("Object has been returned")
@@ -121,9 +121,9 @@ def handle_loan(object_list, df_library, scan, card_tracker):
             'Name': name,
             'Type Object': object_type,
             'Belongs To': owner,
-            'Action': 'loaned',
+            'Action': 'Loaned',
             'Timestamp': now,
-            'Barcode': barcode,
+            'NSS Barcode': barcode,
             'Card': card_tracker.card
         })
         print(f"Object loaned to: {card_tracker.card}")
@@ -165,12 +165,12 @@ def handle_barcode_print(isbn, card_tracker):
     try:
         df_library = pd.read_excel("loan_system_object_library.xlsx")
     except:
-        df_library = pd.DataFrame(columns=["Name", "Type Object", "Belongs To", "Barcode", "State", "ISBN", "Registered Date", "Author", "Publisher", "Published"])
+        df_library = pd.DataFrame(columns=["Name", "Type Object", "Belongs To", "NSS Barcode", "State", "ISBN", "Registered Date", "Author", "Publisher", "Published"])
 
-    copy_id = (df_library["Barcode"].astype(str).str.startswith(f"{isbn}-")).sum() + 1
-    barcode = f"{isbn}-{copy_id}"
+    copy_id = (df_library["NSS Barcode"].astype(str).str.startswith(f"{isbn}+")).sum() + 1
+    barcode = f"{isbn}+{copy_id}"
 
-    if barcode in df_library.get("Barcode", []):
+    if barcode in df_library.get("NSS Barcode", []):
         print(f"Barcode {barcode} already exists. Skipping.")
         return None
 
@@ -178,7 +178,7 @@ def handle_barcode_print(isbn, card_tracker):
         "Name": title,
         "Type Object": "book",
         "Belongs To": "NSS",
-        "Barcode": barcode,
+        "NSS Barcode": barcode,
         "State": "registered",
         "ISBN": isbn,
         "Registered Date": now,
@@ -192,7 +192,7 @@ def handle_barcode_print(isbn, card_tracker):
     object_list = df_library.to_dict(orient='records')
     print("Book information added to the library.")
     append_history({'Name': title, 'Type Object': "Book", 'Belongs To': "NSS",
-                    'Action': 'registered', 'Timestamp': now, 'Barcode': barcode, 'Card': card_tracker.card})
+                    'Action': 'Registered', 'Timestamp': now, 'NSS Barcode': barcode, 'Card': card_tracker.card})
 
     filename = f"barcodes/barcode_{isbn}_{copy_id}"
     os.makedirs("barcodes", exist_ok=True)
