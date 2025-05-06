@@ -176,10 +176,10 @@ def handle_barcode_print(isbn, card_tracker):
 
     new_entry = {
         "Name": title,
-        "Type Object": "book",
+        "Type Object": "Book",
         "Belongs To": "NSS",
         "NSS Barcode": barcode,
-        "State": "registered",
+        "State": "Registered",
         "ISBN": isbn,
         "Registered Date": now,
         "Author": author,
@@ -198,14 +198,19 @@ def handle_barcode_print(isbn, card_tracker):
     os.makedirs("barcodes", exist_ok=True)
     Code39(barcode, writer=ImageWriter(), add_checksum=False).save(filename)
 
+    logo_height = 100
+    margin = 10
     with Image.open(filename+".png") as barcode_img:
+        base_width, base_height = barcode_img.size
+        barcode_img_logo = Image.new('RGBA', (base_width, base_height+logo_height+margin),(255,255,255,255))
         with Image.open(logo_path).convert("RGBA") as logo_img:
-            logo_size = (80, 80)
+            logo_size = (109, 100) # org img dimensions 374x342
             logo_img.thumbnail(logo_size, Image.Resampling.LANCZOS)
-            logo_x = (barcode_img.width - logo_size[0]) // 2
-            logo_y = (barcode_img.height - logo_size[1]*2) // 2
-            barcode_img.paste(logo_img, (logo_x, logo_y), logo_img)
-            barcode_img.save(filename+".png")
+            logo_x = (barcode_img.width-logo_img.width)//2
+            logo_y = margin
+            barcode_img_logo.paste(barcode_img, (0, margin+logo_height))
+            barcode_img_logo.paste(logo_img, (logo_x, logo_y), logo_img)
+            barcode_img_logo.save(filename+".png")
     print(f"Saved barcode image to {filename+".png"}")
     return filename
 
@@ -230,8 +235,8 @@ def handle_barcode_layout(filenames, cleanup=True):
     MARGIN = 10
     SPACING = 10
     ASPECT_RATIO = 0.3799
-    MAX_BARCODE_WIDTH = 700  # Resize to fit more per page
-    MAX_BARCODE_HEIGHT = round(MAX_BARCODE_WIDTH*ASPECT_RATIO) # height = width x 0.3799 rounded
+    MAX_BARCODE_WIDTH = 1000  # Resize to fit more per page
+    MAX_BARCODE_HEIGHT = round(MAX_BARCODE_WIDTH*ASPECT_RATIO) + 109 # height = width x 0.3799 rounded, adding logo height
 
     pages = []
     layout = Image.new('RGB', (A4_WIDTH, A4_HEIGHT), 'white')
@@ -358,6 +363,7 @@ def main():
                 handle_barcode_print(scan, card_tracker)
             elif mode == "bulk import":
                 handle_bulk_buffered_isbn(scan)
+                print(f'Scanned: {scan}')
                 print(f'Mode is currently set to: {mode}, scan all ISBNs. \n Use "print layout" to generate barcodes')
 
 
