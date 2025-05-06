@@ -27,7 +27,7 @@ def read_scan(scan):
 
 
 def lookup(object_list, barcode):
-    print(f'{object_list=}')
+    #print(f'{object_list=}')
     for i, obj in enumerate(object_list):
         print(f'{obj=}')
         if barcode == obj.get("NSS Barcode"):
@@ -49,7 +49,7 @@ def read_library():
         df = pd.read_excel("loan_system_object_library.xlsx")
         return df.to_dict(orient='records'), df
     except Exception as e:
-        print(f"Error reading library file: {e}")
+        print(f'Error reading library file: {e}')
         return [], pd.DataFrame(columns=["Name", "Type Object", "Belongs To", "NSS Barcode", "State", "ISBN", "Registered Date", "Author", "Publisher", "Published"])
 
 
@@ -126,7 +126,7 @@ def handle_loan(object_list, df_library, scan, card_tracker):
             'NSS Barcode': barcode,
             'Card': card_tracker.card
         })
-        print(f"Object loaned to: {card_tracker.card}")
+        print(f'Object loaned to: {card_tracker.card}')
     return object_list, df_library
 
 
@@ -140,15 +140,15 @@ def handle_barcode_print(isbn, card_tracker):
             with open(logo_path, 'wb') as f:
                 f.write(img_data)
         except Exception as e:
-            print(f"Failed to download logo: {e}")
+            print(f'Failed to download logo: {e}')
             return None
 
-    print(f"Looking up book info for ISBN {isbn}...")
+    print(f'Looking up book info for ISBN {isbn}...')
     try:
         response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}")
         data = response.json()
     except Exception as e:
-        print(f"Failed to fetch or parse book data: {e}")
+        print(f'Failed to fetch or parse book data: {e}')
         return None
 
     if "items" not in data:
@@ -171,7 +171,7 @@ def handle_barcode_print(isbn, card_tracker):
     barcode = f"{isbn}+{copy_id}"
 
     if barcode in df_library.get("NSS Barcode", []):
-        print(f"Barcode {barcode} already exists. Skipping.")
+        print(f'Barcode {barcode} already exists. Skipping.')
         return None
 
     new_entry = {
@@ -211,7 +211,7 @@ def handle_barcode_print(isbn, card_tracker):
             barcode_img_logo.paste(barcode_img, (0, margin+logo_height))
             barcode_img_logo.paste(logo_img, (logo_x, logo_y), logo_img)
             barcode_img_logo.save(filename+".png")
-    print(f"Saved barcode image to {filename+".png"}")
+    print(f'Saved barcode image to {filename+".png"}')
     return filename
 
 
@@ -224,7 +224,7 @@ def handle_barcode_layout(filenames, cleanup=True):
             with Image.open(f + ".png") as img:
                 images.append(img.copy())
         except Exception as e:
-            print(f"Failed to open image {f+'.png'}: {e}")
+            print(f'Failed to open image {f+".png"}: {e}')
     if not images:
         print("No valid images to print.")
         return
@@ -274,7 +274,7 @@ def handle_barcode_layout(filenames, cleanup=True):
         dpi=(DPI, DPI)
     )
 
-    print(f"Saved combined A4 barcode PDF as {pdf_filename}")
+    print(f'Saved combined A4 barcode PDF as {pdf_filename}')
 
     print(f'Cleaning up pngs.')
     if cleanup:
@@ -282,7 +282,7 @@ def handle_barcode_layout(filenames, cleanup=True):
             try:
                 os.remove(f + ".png")
             except Exception as e:
-                print(f"Failed to delete {f+'.png'}: {e}")
+                print(f'Failed to delete {f+".png"}: {e}')
 
 
 def handle_bulk_buffered_isbn(scan):
@@ -344,7 +344,7 @@ def main():
                     mode = "loan"
             else:
                 mode = scan.lower()
-                print(f"Mode set to {mode}")
+                print(f'Mode set to {mode}')
         elif scan[0:3].upper() == "UIT":
             if scan == card_tracker.card:
                 card_tracker.card = None
